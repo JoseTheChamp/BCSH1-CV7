@@ -10,22 +10,26 @@ namespace ChampionsLeagueLibrary
     public class PlayersFileSerializerDeserializer
     {
         readonly IPlayersSaveableLoadable players;
-        readonly string file;
+        public string FilePath { get; set; }
 
         public PlayersFileSerializerDeserializer(IPlayersSaveableLoadable players, string file)
         {
             this.players = players;
-            this.file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, file);
+            this.FilePath = file;
         }
 
         public void Save()
         {
-            Debug.WriteLine("Serializer-SAVE");
-            if (!File.Exists(file))
+            Debug.WriteLine("Serializer-SAVE  cesta: " + FilePath);
+            /*
+            if (!File.Exists(FilePath))
             {
-                File.Create(file);
+                Debug.WriteLine("Saving - novy soubor jemno:   " + FilePath);
+                File.Create(FilePath);
+                File
             }
-            using (StreamWriter outputFile = new StreamWriter(file, false))
+            */
+            using (StreamWriter outputFile = new StreamWriter(FilePath, false))
             {
                 Player[] playersArray = players.Save();
                 foreach (Player player in playersArray)
@@ -38,9 +42,9 @@ namespace ChampionsLeagueLibrary
         public void Load()
         {
             Debug.WriteLine("Serializer-LOAD");
-            if (File.Exists(file))
+            if (File.Exists(FilePath))
             {
-                string[] lines = File.ReadAllLines(file, Encoding.UTF8);
+                string[] lines = File.ReadAllLines(FilePath, Encoding.UTF8);
                 Player[] playerArray = new Player[lines.Length];
                 for (int i = 0; i < lines.Length; i++)
                 {
@@ -50,13 +54,13 @@ namespace ChampionsLeagueLibrary
             }
         }
 
-        private string Serialize(Player p) //TODO
+        private static string Serialize(Player p) //TODO
         {
             Debug.WriteLine("Writing " + p);
             return p.Name + "@" + p.Club + "@" + p.GoalCount;
         }
 
-        private Player Deserialize(string s) //TODO
+        private static Player Deserialize(string s) //TODO
         {
             string[] attributes  = s.Split('@');
             FootballClub club = FootballClub.None;

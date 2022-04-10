@@ -16,7 +16,7 @@ namespace ChampionsLeague
 
         private PlayersRecords playersRecords = new PlayersRecords();
         private PlayersFileSerializerDeserializer serializer;
-        private readonly string file = "Players.players";
+        private string file = "Players.players";
 
 
         public ChampionsLeagueForm()
@@ -25,7 +25,6 @@ namespace ChampionsLeague
             serializer = new PlayersFileSerializerDeserializer(playersRecords,file);
             playersRecords.PlayersCountChanged += UpdatePlayerListBox;
             playersRecords.PlayersCountChanged += UpdateConsoleListBox;
-            serializer.Load();
         }
 
         private void UpdatePlayerListBox(object sender, PlayersCountChangedEventArgs e)
@@ -110,14 +109,35 @@ namespace ChampionsLeague
 
         private void buttonSave_Click(object sender, EventArgs e)
         {
-            Debug.WriteLine("ButtonSaveClicked");
-            serializer.Save();
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "Players | *.players";
+            saveFileDialog.DefaultExt = "players";
+            saveFileDialog.Title = "Výběr players souboru.";
+            saveFileDialog.ShowDialog();
+            Debug.WriteLine("SaveNAme z vyberu:   " + saveFileDialog.FileName);
+            if (saveFileDialog.FileName != null && saveFileDialog.FileName != "")
+            {
+                file = saveFileDialog.FileName;
+                serializer.FilePath = file;
+                Debug.WriteLine("ButtonSaveClicked");
+                serializer.Save();
+            }
         }
 
         private void buttonLoad_Click(object sender, EventArgs e)
         {
-            Debug.WriteLine("ButtonLoadClicked");
-            serializer.Load();
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Players | *.players";
+            openFileDialog.DefaultExt = "players";
+            openFileDialog.Title = "Výběr players souboru.";
+            openFileDialog.ShowDialog();
+            if (openFileDialog.FileName != null && openFileDialog.FileName != "")
+            {
+                file = openFileDialog.FileName;
+                serializer.FilePath = file;
+                Debug.WriteLine("ButtonLoadClicked");
+                serializer.Load();
+            }
         }
     }
 }
